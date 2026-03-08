@@ -1,4 +1,4 @@
-Attribute VB_Name = "PyPath"
+Attribute VB_Name = "pth_PyPath"
 '@Folder "PyPathProject.src"
 Option Explicit
 
@@ -55,42 +55,39 @@ Private Const FILE_FLAG_BACKUP_SEMANTICS As Long = &H2000000
 Private Const INVALID_FILE_ATTRIBUTES As Long = -1
 Private Const FILE_ATTRIBUTE_DIRECTORY As Long = &H10
 
-Public Const CUR_DIR As String = "."
-Public Const PAR_DIR As String = ".."
-Public Const EX_SEP As String = "."
-Public Const SEP As String = "\"
-Public Const ALT_SEP As String = "/"
-Public Const PATH_SEP As String = ";"
-Public Const DEV_NULL As String = "nul"
+Public Const pth_CUR_DIR As String = "."
+Public Const pth_PAR_DIR As String = ".."
+Public Const pth_EX_SEP As String = "."
+Public Const pth_SEP As String = "\"
+Public Const pth_ALT_SEP As String = "/"
+Public Const pth_PATH_SEP As String = ";"
+Public Const pth_DEV_NULL As String = "nul"
 
 '@Description "Return a normalized absolutized version of the pathname path."
-Public Function AbsPath(ByVal Path As String) As String
-Attribute AbsPath.VB_Description = "Return a normalized absolutized version of the pathname path."
+Public Function pth_AbsPath(ByVal Path As String) As String
     Dim CWD As String
     CWD = GetCWD()
 
-    If Not PyPath.IsAbs(Path) Then
-        Path = PyPath.Join(CWD, Path)
+    If Not pth_PyPath.pth_IsAbs(Path) Then
+        Path = pth_PyPath.pth_Join(CWD, Path)
     End If
 
-    AbsPath = PyPath.NormPath(Path)
+    pth_AbsPath = pth_PyPath.pth_NormPath(Path)
 End Function
 
 '@Description "Return the base name of pathname path. This is the second element of the pair returned by passing path to the function split()."
-Public Function Basename(ByVal Path As String) As String
-Attribute Basename.VB_Description = "Return the base name of pathname path. This is the second element of the pair returned by passing path to the function split()."
-    Basename = PyPath.Split(Path)(1)
+Public Function pth_Basename(ByVal Path As String) As String
+    pth_Basename = pth_PyPath.pth_Split(Path)(1)
 End Function
 
 '@Description "Return the longest common sub-path of each pathname in the iterable paths."
-Public Function CommonPath(ByRef Paths As Variant) As String
-Attribute CommonPath.VB_Description = "Return the longest common sub-path of each pathname in the iterable paths."
+Public Function pth_CommonPath(ByRef Paths As Variant) As String
     Dim DriveSplits() As Variant
     ReDim DriveSplits(UBound(Paths))
     Dim i As Long
     Dim p As Variant
     For Each p In Paths
-        DriveSplits(i) = PyPath.SplitRoot(PyPath.NormCase(p))
+        DriveSplits(i) = pth_PyPath.pth_SplitRoot(pth_PyPath.pth_NormCase(p))
         i = i + 1
     Next
 
@@ -98,7 +95,7 @@ Attribute CommonPath.VB_Description = "Return the longest common sub-path of eac
     ReDim SplitPaths(UBound(DriveSplits))
     i = 0
     For Each p In DriveSplits
-        SplitPaths(i) = Strings.Split(p(2), SEP)
+        SplitPaths(i) = Strings.Split(p(2), pth_SEP)
         i = i + 1
     Next
 
@@ -119,7 +116,7 @@ Attribute CommonPath.VB_Description = "Return the longest common sub-path of eac
     End If
 
     Dim Splited() As String
-    Splited = PyPath.SplitRoot(Strings.Replace(Paths(0), ALT_SEP, SEP))
+    Splited = pth_PyPath.pth_SplitRoot(Strings.Replace(Paths(0), pth_ALT_SEP, pth_SEP))
     Dim Drive As String
     Drive = Splited(0)
     Dim Root As String
@@ -149,12 +146,12 @@ Attribute CommonPath.VB_Description = "Return the longest common sub-path of eac
     End If
 
     Dim Common() As String
-    ReDim Common(UBound(Strings.Split(Path, SEP)))
+    ReDim Common(UBound(Strings.Split(Path, pth_SEP)))
 
     i = 0
     Dim c As Variant
-    For Each c In Strings.Split(Path, SEP)
-        If c <> CUR_DIR Then
+    For Each c In Strings.Split(Path, pth_SEP)
+        If c <> pth_CUR_DIR Then
             Common(i) = c
             i = i + 1
         End If
@@ -171,7 +168,7 @@ Attribute CommonPath.VB_Description = "Return the longest common sub-path of eac
         Dim j As Long
         j = 0
         For Each c In s
-            If c <> CUR_DIR Then
+            If c <> pth_CUR_DIR Then
                 NestedBuffer(j) = c
                 j = j + 1
             End If
@@ -209,14 +206,13 @@ Attribute CommonPath.VB_Description = "Return the longest common sub-path of eac
         End If
     Next
 
-    CommonPath = Drive & Root & Strings.Join(Common, SEP)
+    pth_CommonPath = Drive & Root & Strings.Join(Common, pth_SEP)
 End Function
 
 '@Description "Return the longest path prefix (taken character-by-character) that is a prefix of all paths in list. If list is empty, return the empty string ('')."
-Public Function CommonPrefix(ByRef List As Variant)
-Attribute CommonPrefix.VB_Description = "Return the longest path prefix (taken character-by-character) that is a prefix of all paths in list. If list is empty, return the empty string ('')."
+Public Function pth_CommonPrefix(ByRef List As Variant)
     If LBound(List) = UBound(List) Then
-        CommonPrefix = List(LBound(List))
+        pth_CommonPrefix = List(LBound(List))
         Exit Function
     End If
 
@@ -252,30 +248,27 @@ Attribute CommonPrefix.VB_Description = "Return the longest path prefix (taken c
         Next
     Next
 
-    CommonPrefix = Common
+    pth_CommonPrefix = Common
 End Function
 
 '@Description "Return the directory name of pathname path. This is the first element of the pair returned by passing path to the function split()."
-Public Function Dirname(ByVal Path As String) As String
-Attribute Dirname.VB_Description = "Return the directory name of pathname path. This is the first element of the pair returned by passing path to the function split()."
-    Dirname = PyPath.Split(Path)(0)
+Public Function pth_Dirname(ByVal Path As String) As String
+    pth_Dirname = pth_PyPath.pth_Split(Path)(0)
 End Function
 
 '@Description "Return True if path refers to an existing path."
-Public Function Exists(ByVal Path As String) As Boolean
-Attribute Exists.VB_Description = "Return True if path refers to an existing path."
-    Path = PyPath.AbsPath(Path)
-    Exists = GetFileAttributes(Path) <> INVALID_FILE_ATTRIBUTES
+Public Function pth_Exists(ByVal Path As String) As Boolean
+    Path = pth_PyPath.pth_AbsPath(Path)
+    pth_Exists = GetFileAttributes(Path) <> INVALID_FILE_ATTRIBUTES
 End Function
 
 '@Description "Return the argument with an initial component of ~ or ~user replaced by that user's home directory. USERPROFILE will be used if set, otherwise a combination of HOMEPATH and HOMEDRIVE will be used. An initial ~user is handled by checking that the last directory component of the current user's home directory matches USERNAME, and replacing it if so. If the expansion fails or if the path does not begin with a tilde, the path is returned unchanged."
-Public Function ExpandUser(ByVal Path As String) As String
-Attribute ExpandUser.VB_Description = "Return the argument with an initial component of ~ or ~user replaced by that user's home directory. USERPROFILE will be used if set, otherwise a combination of HOMEPATH and HOMEDRIVE will be used. An initial ~user is handled by checking that the last directory component of the current user's home directory matches USERNAME, and replacing it if so. If the expansion fails or if the path does not begin with a tilde, the path is returned unchanged."
+Public Function pth_ExpandUser(ByVal Path As String) As String
     Const TILDE As String = "~"
-    Const SEPS As String = SEP & ALT_SEP
+    Const SEPS As String = pth_SEP & pth_ALT_SEP
 
     If Strings.Left(Path, 1) <> TILDE Then
-        ExpandUser = Path
+        pth_ExpandUser = Path
         Exit Function
     End If
 
@@ -294,10 +287,10 @@ Attribute ExpandUser.VB_Description = "Return the argument with an initial compo
     If Strings.Len(UserHome) = 0 Then
         Dim Drive As String
         Drive = Interaction.Environ("HOMEDRIVE")
-        UserHome = PyPath.Join(Drive, Interaction.Environ("HOMEPATH"))
+        UserHome = pth_PyPath.pth_Join(Drive, Interaction.Environ("HOMEPATH"))
 
         If Strings.Len(UserHome) = 0 Then
-            ExpandUser = Path
+            pth_ExpandUser = Path
             Exit Function
         End If
     End If
@@ -314,20 +307,19 @@ Attribute ExpandUser.VB_Description = "Return the argument with an initial compo
             ' named by corresponding usernames.  If userhome isn't a
             ' normal profile directory, this guess is likely wrong,
             ' so we bail out.
-            If CurrentUser <> PyPath.Basename(UserHome) Then
-                ExpandUser = Path
+            If CurrentUser <> pth_PyPath.pth_Basename(UserHome) Then
+                pth_ExpandUser = Path
                 Exit Function
             End If
-            UserHome = PyPath.Join(PyPath.Dirname(UserHome), TargetUser)
+            UserHome = pth_PyPath.pth_Join(pth_PyPath.pth_Dirname(UserHome), TargetUser)
         End If
     End If
 
-    ExpandUser = UserHome & Strings.Mid(Path, i + 1)
+    pth_ExpandUser = UserHome & Strings.Mid(Path, i + 1)
 End Function
 
 '@Description "Return the argument with environment variables expanded. Substrings of the form %name% are replaced by the value of environment variable name. Malformed variable names and references to non-existing variables are left unchanged."
-Public Function ExpandVars(ByVal Path As String) As String
-Attribute ExpandVars.VB_Description = "Return the argument with environment variables expanded. Substrings of the form %name% are replaced by the value of environment variable name. Malformed variable names and references to non-existing variables are left unchanged."
+Public Function pth_ExpandVars(ByVal Path As String) As String
     Dim i As Long
     i = 1
     Do While True
@@ -357,30 +349,26 @@ Attribute ExpandVars.VB_Description = "Return the argument with environment vari
         If i > Strings.Len(Path) Then Exit Do
     Loop
 
-    ExpandVars = Path
+    pth_ExpandVars = Path
 End Function
 
 '@Description "Return the time of last access of path."
-Public Function GetATime(ByVal Path As String) As Double
-Attribute GetATime.VB_Description = "Return the time of last access of path."
-    GetATime = GetFileTimeValue(Path, "Access")
+Public Function pth_GetATime(ByVal Path As String) As Double
+    pth_GetATime = GetFileTimeValue(Path, "Access")
 End Function
 
 '@Description "Return the creation time for path."
-Public Function GetCTime(ByVal Path As String) As Double
-Attribute GetCTime.VB_Description = "Return the creation time for path."
-    GetCTime = GetFileTimeValue(Path, "Creation")
+Public Function pth_GetCTime(ByVal Path As String) As Double
+    pth_GetCTime = GetFileTimeValue(Path, "Creation")
 End Function
 
 '@Description "Return the time of last modification of path."
-Public Function GetMTime(ByVal Path As String) As Double
-Attribute GetMTime.VB_Description = "Return the time of last modification of path."
-    GetMTime = GetFileTimeValue(Path, "Modified")
+Public Function pth_GetMTime(ByVal Path As String) As Double
+    pth_GetMTime = GetFileTimeValue(Path, "Modified")
 End Function
 
 '@Description "Return the size, in bytes, of path."
-Public Function GetSize(ByVal Path As String) As Currency
-Attribute GetSize.VB_Description = "Return the size, in bytes, of path."
+Public Function pth_GetSize(ByVal Path As String) As Currency
   #If VBA7 Then
     Dim hFile As LongPtr
   #Else
@@ -391,59 +379,55 @@ Attribute GetSize.VB_Description = "Return the size, in bytes, of path."
 
     Dim FileSize As Currency
     If GetFileSizeEx(hFile, FileSize) <> 0 Then
-        GetSize = FileSize * 10000
+        pth_GetSize = FileSize * 10000
     End If
 
     CloseHandle hFile
 End Function
 
 '@Description "Return True if path is an absolute pathname. That it begins with two (back)slashes, or a drive letter, colon, and (back)slash together."
-Public Function IsAbs(ByVal Path As String) As Boolean
-Attribute IsAbs.VB_Description = "Return True if path is an absolute pathname. That it begins with two (back)slashes, or a drive letter, colon, and (back)slash together."
+Public Function pth_IsAbs(ByVal Path As String) As Boolean
     Const COLON_SEP As String = ":\"
     Const DOUBLE_SEP As String = "\\"
 
     Dim PathDrive As String
     PathDrive = Strings.Left(Path, 3)
     Dim CorrectPathDrive As String
-    CorrectPathDrive = Strings.Replace(PathDrive, ALT_SEP, SEP)
+    CorrectPathDrive = Strings.Replace(PathDrive, pth_ALT_SEP, pth_SEP)
     Path = Strings.Replace(Path, PathDrive, CorrectPathDrive, Count:=1)
 
-    IsAbs = Strings.Mid(Path, 2, 2) = COLON_SEP Or _
+    pth_IsAbs = Strings.Mid(Path, 2, 2) = COLON_SEP Or _
             Strings.Left(Path, 2) = DOUBLE_SEP
 End Function
 
 '@Description "Return True if path is an existing directory."
-Public Function IsDir(ByVal Path As String) As Boolean
-Attribute IsDir.VB_Description = "Return True if path is an existing directory."
-    Path = PyPath.AbsPath(Path)
+Public Function pth_IsDir(ByVal Path As String) As Boolean
+    Path = pth_PyPath.pth_AbsPath(Path)
 
     Dim attr As Long
     attr = GetFileAttributes(Path)
 
-    IsDir = (attr <> INVALID_FILE_ATTRIBUTES) And ((attr And FILE_ATTRIBUTE_DIRECTORY) <> 0)
+    pth_IsDir = (attr <> INVALID_FILE_ATTRIBUTES) And ((attr And FILE_ATTRIBUTE_DIRECTORY) <> 0)
 End Function
 
 '@Description "Return True if path is an existing regular file."
-Public Function IsFile(ByVal Path As String) As Boolean
-Attribute IsFile.VB_Description = "Return True if path is an existing regular file."
-    Path = PyPath.AbsPath(Path)
+Public Function pth_IsFile(ByVal Path As String) As Boolean
+    Path = pth_PyPath.pth_AbsPath(Path)
 
     Dim attr As Long
     attr = GetFileAttributes(Path)
 
-    IsFile = (attr <> INVALID_FILE_ATTRIBUTES) And ((attr And FILE_ATTRIBUTE_DIRECTORY) = 0)
+    pth_IsFile = (attr <> INVALID_FILE_ATTRIBUTES) And ((attr And FILE_ATTRIBUTE_DIRECTORY) = 0)
 End Function
 
 '@Description "Join one or more path segments intelligently. The return value is the concatenation of path and all members of Paths(), with exactly one directory separator following each non-empty part, except the last. That is, the result will only end in a separator if the last part is either empty or ends in a separator. If a segment is an absolute path (which on Windows requires both a drive and a root), then all previous segments are ignored and joining continues from the absolute path segment."
-Public Function Join(ByVal Path As String, ParamArray Paths() As Variant) As String
-Attribute Join.VB_Description = "Join one or more path segments intelligently. The return value is the concatenation of path and all members of Paths(), with exactly one directory separator following each non-empty part, except the last. That is, the result will only end in a separator if the last part is either empty or ends in a separator. If a segment is an absolute path (which on Windows requires both a drive and a root), then all previous segments are ignored and joining continues from the absolute path segment."
+Public Function pth_Join(ByVal Path As String, ParamArray Paths() As Variant) As String
     Const COLON_SEP As String = ":\"
-    Const SEPS As String = SEP & ALT_SEP
-    Const COLON_SEPS As String = COLON_SEP & ALT_SEP
+    Const SEPS As String = pth_SEP & pth_ALT_SEP
+    Const COLON_SEPS As String = COLON_SEP & pth_ALT_SEP
 
     Dim Result() As String
-    Result = PyPath.SplitRoot(Path)
+    Result = pth_PyPath.pth_SplitRoot(Path)
     Dim ResultDrive As String
     ResultDrive = Result(0)
     Dim ResultRoot As String
@@ -454,7 +438,7 @@ Attribute Join.VB_Description = "Join one or more path segments intelligently. T
     Dim p As Variant
     For Each p In Paths
         Dim p_Result() As String
-        p_Result = PyPath.SplitRoot(p)
+        p_Result = pth_PyPath.pth_SplitRoot(p)
         Dim p_Drive As String
         p_Drive = p_Result(0)
         Dim p_Root As String
@@ -485,7 +469,7 @@ Attribute Join.VB_Description = "Join one or more path segments intelligently. T
 
         ' Second path is relative to the first
         If Strings.Len(ResultPath) > 0 And Strings.InStr(1, SEPS, Strings.Right(ResultPath, 1)) = 0 Then
-            ResultPath = ResultPath + SEP
+            ResultPath = ResultPath + pth_SEP
         End If
         ResultPath = ResultPath + p_Path
 Continue:
@@ -493,25 +477,23 @@ Continue:
     ' add separator between UNC and non-absolute path
     If (Strings.Len(ResultPath) > 0 And Strings.Len(ResultRoot) = 0 And _
         Strings.Len(ResultDrive) > 0 And Strings.InStr(1, COLON_SEPS, Strings.Right(ResultDrive, 1)) = 0) Then
-        Join = ResultDrive + SEP + ResultPath
+        pth_Join = ResultDrive + pth_SEP + ResultPath
         Exit Function
     End If
 
-    Join = ResultDrive + ResultRoot + ResultPath
+    pth_Join = ResultDrive + ResultRoot + ResultPath
 End Function
 
 '@Description "Normalize the case of a pathname. Convert all characters in the pathname to lowercase, and also convert forward slashes to backward slashes."
-Public Function NormCase(ByVal Path As String) As String
-Attribute NormCase.VB_Description = "Normalize the case of a pathname. Convert all characters in the pathname to lowercase, and also convert forward slashes to backward slashes."
-    NormCase = Strings.LCase(Strings.Replace(Path, ALT_SEP, SEP))
+Public Function pth_NormCase(ByVal Path As String) As String
+    pth_NormCase = Strings.LCase(Strings.Replace(Path, pth_ALT_SEP, pth_SEP))
 End Function
 
 '@Description "Normalize a path, e.g. A//B, A/./B and A/foo/../B all become A\B."
-Public Function NormPath(ByVal Path As String) As String
-Attribute NormPath.VB_Description = "Normalize a path, e.g. A//B, A/./B and A/foo/../B all become A\\B."
-    Path = Strings.Replace(Path, ALT_SEP, SEP)
+Public Function pth_NormPath(ByVal Path As String) As String
+    Path = Strings.Replace(Path, pth_ALT_SEP, pth_SEP)
     Dim Splited() As String
-    Splited = PyPath.SplitRoot(Path)
+    Splited = pth_PyPath.pth_SplitRoot(Path)
     Dim Drive As String
     Drive = Splited(0)
     Dim Root As String
@@ -521,7 +503,7 @@ Attribute NormPath.VB_Description = "Normalize a path, e.g. A//B, A/./B and A/fo
     PREFIX = Drive & Root
 
     Dim Comps() As String
-    Comps = Strings.Split(Path, SEP)
+    Comps = Strings.Split(Path, pth_SEP)
 
     Dim Result() As String
     ReDim Result(UBound(Comps))
@@ -530,12 +512,12 @@ Attribute NormPath.VB_Description = "Normalize a path, e.g. A//B, A/./B and A/fo
     Dim i As Long
     i = 0
     While i <= UBound(Comps)
-        If Strings.Len(Comps(i)) = 0 Or Comps(i) = CUR_DIR Then
+        If Strings.Len(Comps(i)) = 0 Or Comps(i) = pth_CUR_DIR Then
             Comps(i) = Empty
             i = i + 1
-        ElseIf Comps(i) = PAR_DIR Then
+        ElseIf Comps(i) = pth_PAR_DIR Then
             If i > 0 Then
-                If Comps(i - 1) <> PAR_DIR Then
+                If Comps(i - 1) <> pth_PAR_DIR Then
                     Comps(i - 1) = Empty
                     Comps(i) = Empty
                     Result(j - 1) = Empty
@@ -561,16 +543,15 @@ Attribute NormPath.VB_Description = "Normalize a path, e.g. A//B, A/./B and A/fo
     ' If the path is now empty, substitute '.'
     If Strings.Len(PREFIX) = 0 And Strings.Len(Strings.Join(Result)) = 0 Then
         ReDim Preserve Result(0)
-        Result(0) = CUR_DIR
+        Result(0) = pth_CUR_DIR
     End If
 
-    NormPath = PREFIX & Strings.Join(Result, SEP)
+    pth_NormPath = PREFIX & Strings.Join(Result, pth_SEP)
 End Function
 
 '@Description "Return the canonical path of the specified filename. This function will also resolve MS-DOS (also called 8.3) style names such as C:\PROGRA~1 to C:\Program Files."
-Public Function RealPath(ByVal Path As String) As String
-Attribute RealPath.VB_Description = "Return the canonical path of the specified filename. This function will also resolve MS-DOS (also called 8.3) style names such as C:\\PROGRA~1 to C:\\Program Files."
-    Path = PyPath.NormPath(Path)
+Public Function pth_RealPath(ByVal Path As String) As String
+    Path = pth_PyPath.pth_NormPath(Path)
     Const PREFIX As String = "\\?\"
     Const UNC_PREFIX = "\\?\UNC\"
     Const NEW_UNC_PREFIX = "\\"
@@ -578,18 +559,18 @@ Attribute RealPath.VB_Description = "Return the canonical path of the specified 
     Dim CWD As String
     CWD = GetCWD()
 
-    If PyPath.NormCase(Path) = DEV_NULL Then
-        RealPath = "\\.\NULL"
+    If pth_PyPath.pth_NormCase(Path) = pth_DEV_NULL Then
+        pth_RealPath = "\\.\NULL"
         Exit Function
     End If
 
     Dim HadPrefix As Boolean
     HadPrefix = Strings.Left(Path, Strings.Len(PREFIX)) = PREFIX
 
-    If Not HadPrefix And Not PyPath.IsAbs(Path) Then
-        Path = PyPath.Join(CWD, Path)
+    If Not HadPrefix And Not pth_PyPath.pth_IsAbs(Path) Then
+        Path = pth_PyPath.pth_Join(CWD, Path)
     End If
-    Path = PyPath.NormPath(Path)
+    Path = pth_PyPath.pth_NormPath(Path)
 
     Dim SPath As String
     If Not HadPrefix And Strings.Left(Path, Strings.Len(PREFIX)) = PREFIX Then
@@ -610,15 +591,14 @@ Attribute RealPath.VB_Description = "Return the canonical path of the specified 
     Size = GetLongPathName(Path, LongPath, 260)
 
     If Size > 0 Then
-        RealPath = Strings.Left(LongPath, Size)
+        pth_RealPath = Strings.Left(LongPath, Size)
     Else
-        RealPath = Path
+        pth_RealPath = Path
     End If
 End Function
 
 '@Description "Return a relative filepath to path either from the current directory or from an optional start directory."
-Public Function RelPath(ByVal Path As String, Optional ByVal Start As String = CUR_DIR) As String
-Attribute RelPath.VB_Description = "Return a relative filepath to path either from the current directory or from an optional start directory."
+Public Function pth_RelPath(ByVal Path As String, Optional ByVal Start As String = pth_CUR_DIR) As String
     If Strings.Len(Path) = 0 Then
         Information.Err().Raise _
             Number:=5, _
@@ -627,30 +607,30 @@ Attribute RelPath.VB_Description = "Return a relative filepath to path either fr
     End If
 
     If Strings.Len(Start) = 0 Then
-        Start = CUR_DIR
+        Start = pth_CUR_DIR
     End If
 
     Dim StartAbs As String
-    StartAbs = PyPath.AbsPath(Start)
+    StartAbs = pth_PyPath.pth_AbsPath(Start)
     Dim PathAbs As String
-    PathAbs = AbsPath(Path)
+    PathAbs = pth_AbsPath(Path)
 
     Dim Splited() As String
-    Splited = PyPath.SplitRoot(StartAbs)
+    Splited = pth_PyPath.pth_SplitRoot(StartAbs)
 
     Dim StartDrive As String
     StartDrive = Splited(0)
     Dim StartRest As String
     StartRest = Splited(2)
 
-    Splited = PyPath.SplitRoot(PathAbs)
+    Splited = pth_PyPath.pth_SplitRoot(PathAbs)
 
     Dim PathDrive As String
     PathDrive = Splited(0)
     Dim PathRest As String
     PathRest = Splited(2)
 
-    If PyPath.NormCase(StartDrive) <> PyPath.NormCase(PathDrive) Then
+    If pth_PyPath.pth_NormCase(StartDrive) <> pth_PyPath.pth_NormCase(PathDrive) Then
         Information.Err().Raise _
             Number:=5, _
             Source:="RelPath", _
@@ -658,14 +638,14 @@ Attribute RelPath.VB_Description = "Return a relative filepath to path either fr
     End If
 
     Dim StartList() As String
-    StartList = Strings.Split(StartRest, SEP)
+    StartList = Strings.Split(StartRest, pth_SEP)
     Dim PathList() As String
-    PathList = Strings.Split(PathRest, SEP)
+    PathList = Strings.Split(PathRest, pth_SEP)
 
     ' Work out how much of the filepath is shared by start and path.
     Dim i As Long
     For i = 0 To Application.Min(UBound(StartList), UBound(PathList))
-        If PyPath.NormCase(StartList(i)) <> PyPath.NormCase(PathList(i)) Then
+        If pth_PyPath.pth_NormCase(StartList(i)) <> pth_PyPath.pth_NormCase(PathList(i)) Then
             Exit For
         End If
     Next
@@ -674,7 +654,7 @@ Attribute RelPath.VB_Description = "Return a relative filepath to path either fr
     ReDim RelList(i + UBound(PathList))
     Dim j As Long
     For j = 0 To UBound(StartList) - i
-        RelList(j) = PAR_DIR
+        RelList(j) = pth_PAR_DIR
     Next
 
     For j = j To UBound(PathList) - i + 1
@@ -683,19 +663,18 @@ Attribute RelPath.VB_Description = "Return a relative filepath to path either fr
     ReDim Preserve RelList(j - 1)
 
     If Strings.Len(Strings.Join(RelList)) = 0 Then
-        RelPath = CUR_DIR
+        pth_RelPath = pth_CUR_DIR
     Else
-        RelPath = Strings.Join(RelList, SEP)
+        pth_RelPath = Strings.Join(RelList, pth_SEP)
     End If
 End Function
 
 '@Description "Split the pathname path into a pair, (head, tail) where tail is the last pathname component and head is everything leading up to that."
-Public Function Split(ByVal Path As String) As String()
-Attribute Split.VB_Description = "Split the pathname path into a pair, (head, tail) where tail is the last pathname component and head is everything leading up to that."
-    Const SEPS As String = SEP & ALT_SEP
+Public Function pth_Split(ByVal Path As String) As String()
+    Const SEPS As String = pth_SEP & pth_ALT_SEP
 
     Dim Result() As String
-    Result = PyPath.SplitRoot(Path)
+    Result = pth_PyPath.pth_SplitRoot(Path)
     Path = Result(2)
 
     Dim i As Long
@@ -716,96 +695,93 @@ Attribute Split.VB_Description = "Split the pathname path into a pair, (head, ta
     Result(1) = Tail
     ReDim Preserve Result(1)
 
-    Split = Result
+    pth_Split = Result
 End Function
 
 '@Description "Split the pathname path into a pair (drive, tail) where drive is either a mount point or the empty string. "
-Public Function SplitRoot(ByVal Path As String) As String()
-Attribute SplitRoot.VB_Description = "Split the pathname path into a pair (drive, tail) where drive is either a mount point or the empty string. "
+Public Function pth_SplitRoot(ByVal Path As String) As String()
     Dim Result() As String
     ReDim Result(2)
 
     Const UNC_PREFIX As String = "\\?\UNC\"
     Const COLON As String = ":"
     Dim NormPath As String
-    NormPath = Strings.Replace(Path, ALT_SEP, SEP)
+    NormPath = Strings.Replace(Path, pth_ALT_SEP, pth_SEP)
 
-    If Strings.Left(NormPath, 1) = SEP Then
-        If Strings.Mid(NormPath, 2, 1) = SEP Then
+    If Strings.Left(NormPath, 1) = pth_SEP Then
+        If Strings.Mid(NormPath, 2, 1) = pth_SEP Then
             ' UNC drives, e.g. \\server\share or \\?\UNC\server\share
             ' Device drives, e.g. \\.\device or \\?\device
             Dim Start As Long
             Start = Interaction.IIf(Strings.UCase(Strings.Left(NormPath, 8)) = UNC_PREFIX, 8, 2)
             Dim Index As Long
-            Index = Strings.InStr(Start, NormPath, SEP)
+            Index = Strings.InStr(Start, NormPath, pth_SEP)
             If Index = 0 Then
                 Result(0) = Path
-                SplitRoot = Result
+                pth_SplitRoot = Result
                 Exit Function
             End If
     
             Dim Index2 As Long
-            Index2 = Strings.InStr(Index + 1, NormPath, SEP)
+            Index2 = Strings.InStr(Index + 1, NormPath, pth_SEP)
             If Index2 = 0 Then
                 Result(0) = Path
-                SplitRoot = Result
+                pth_SplitRoot = Result
                 Exit Function
             End If
 
             Result(0) = Strings.Left(Path, Index2)
             Result(1) = Strings.Mid(Path, Index2, 1)
             Result(2) = Strings.Mid(Path, Index2 + 1)
-            SplitRoot = Result
+            pth_SplitRoot = Result
             Exit Function
         Else
             Result(1) = Strings.Left(Path, 1)
             Result(2) = Strings.Mid(Path, 2)
-            SplitRoot = Result
+            pth_SplitRoot = Result
             Exit Function
         End If
     ElseIf Strings.Mid(NormPath, 2, 1) = COLON Then
-        If Strings.Mid(NormPath, 3, 1) = SEP Then
+        If Strings.Mid(NormPath, 3, 1) = pth_SEP Then
             ' Absolute drive-letter path, e.g. X:\Windows
             Result(0) = Strings.Left(Path, 2)
             Result(1) = Strings.Mid(Path, 3, 1)
             Result(2) = Strings.Mid(Path, 4)
-            SplitRoot = Result
+            pth_SplitRoot = Result
             Exit Function
         Else
             ' Relative path with drive, e.g. X:Windows
             Result(0) = Strings.Left(Path, 2)
             Result(2) = Strings.Mid(Path, 3)
-            SplitRoot = Result
+            pth_SplitRoot = Result
             Exit Function
         End If
     Else
         ' Relative path, e.g. Windows
         Result(2) = Path
-        SplitRoot = Result
+        pth_SplitRoot = Result
         Exit Function
     End If
 End Function
 
 '@Description "Split the pathname path into a 3-item tuple (drive, root, tail) where drive is a device name or mount point, root is a string of separators after the drive, and tail is everything after the root. Any of these items may be the empty string. In all cases, drive + root + tail will be the same as path."
-Public Function SplitDrive(ByVal Path As String) As String()
-Attribute SplitDrive.VB_Description = "Split the pathname path into a 3-item tuple (drive, root, tail) where drive is a device name or mount point, root is a string of separators after the drive, and tail is everything after the root. Any of these items may be the empty string. In all cases, drive + root + tail will be the same as path."
+Public Function pth_SplitDrive(ByVal Path As String) As String()
     Dim Result() As String
 
-    Result = PyPath.SplitRoot(Path)
+    Result = pth_PyPath.pth_SplitRoot(Path)
     Result(1) = Result(1) & Result(2)
     ReDim Preserve Result(1)
 
-    SplitDrive = Result
+    pth_SplitDrive = Result
 End Function
 
 '@Description "Split the pathname path into a pair (root, ext) such that root + ext = path, and the extension, ext, is empty or begins with a period and contains at most one period. If the path contains no extension, ext will be ''."
-Public Function SplitExt(ByVal Path As String) As String()
-Attribute SplitExt.VB_Description = "Split the pathname path into a pair (root, ext) such that root + ext = path, and the extension, ext, is empty or begins with a period and contains at most one period. If the path contains no extension, ext will be ''."
+Public Function pth_SplitExt(ByVal Path As String) As String()
     Dim Result() As String
     ReDim Result(1)
 
     Dim LastSep As Long
-    LastSep = Strings.InStrRev(Path, CUR_DIR)
+    LastSep = Strings.InStrRev(Path, pth_CUR_DIR)
 
     If LastSep = 0 Then
         Result(0) = Path
@@ -814,7 +790,7 @@ Attribute SplitExt.VB_Description = "Split the pathname path into a pair (root, 
         Result(1) = Strings.Mid(Path, LastSep)
     End If
 
-    SplitExt = Result
+    pth_SplitExt = Result
 End Function
 
 Private Function CompareLists(ByRef List1 As Variant, ByRef List2 As Variant) As Long
