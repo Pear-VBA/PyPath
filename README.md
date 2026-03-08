@@ -20,19 +20,11 @@ Provides most of equivalent functions to Python's `os.path`:
 
 ## Installation
 
-### With [ppm](https://github.com/artemdorozhkin/ppm.git)
-
-Run from the Immediate Window:
-
-```vba
-ppm "install pypath"
-```
-
 ### Manually
 
 1. Open **Excel VBA Editor** (`ALT + F11`)
 2. Go to **File > Export File...** (`Ctrl + E`)
-3. Select the `PyPath.bas` VBA module code
+3. Select the `pth_PyPath.bas` VBA module code
 4. Save and start using the functions in your macros
 
 ## Functions & Usage
@@ -43,7 +35,7 @@ Below are some key functions with usage examples.
 
 ```vba
 Dim AbsolutePath As String
-AbsolutePath = PyPath.AbsPath("C:\Users\User\..\Documents")
+AbsolutePath = pth_PyPath.pth_AbsPath("C:\Users\User\..\Documents")
 Debug.Print AbsolutePath  ' Output: C:\Users\Documents
 ```
 
@@ -51,7 +43,7 @@ Debug.Print AbsolutePath  ' Output: C:\Users\Documents
 
 ```vba
 Dim FileName As String
-FileName = PyPath.Basename("C:\Users\User\file.txt")
+FileName = pth_PyPath.pth_Basename("C:\Users\User\file.txt")
 Debug.Print FileName  ' Output: file.txt
 ```
 
@@ -59,7 +51,7 @@ Debug.Print FileName  ' Output: file.txt
 
 ```vba
 Dim FullPath As String
-FullPath = PyPath.Join("C:\Users", "User", "Documents", "file.txt")
+FullPath = pth_PyPath.pth_Join("C:\Users", "User", "Documents", "file.txt")
 Debug.Print FullPath  ' Output: C:\Users\User\Documents\file.txt
 ```
 
@@ -67,7 +59,7 @@ Debug.Print FullPath  ' Output: C:\Users\User\Documents\file.txt
 
 ```vba
 Dim Exists As Boolean
-Exists = PyPath.Exists("C:\Windows")
+Exists = pth_PyPath.pth_Exists("C:\Windows")
 Debug.Print Exists  ' Output: True
 ```
 
@@ -75,7 +67,7 @@ Debug.Print Exists  ' Output: True
 
 ```vba
 Dim FileSize As Long
-FileSize = PyPath.GetSize("C:\Users\User\file.txt")
+FileSize = pth_PyPath.pth_GetSize("C:\Users\User\file.txt")
 Debug.Print FileSize  ' Output: <file size in bytes>
 ```
 
@@ -83,7 +75,7 @@ Debug.Print FileSize  ' Output: <file size in bytes>
 
 ```vba
 Dim NormalizedPath As String
-NormalizedPath = PyPath.NormPath("C:\Users\..\Documents\.")
+NormalizedPath = pth_PyPath.pth_NormPath("C:\Users\..\Documents\.")
 Debug.Print NormalizedPath  ' Output: C:\Documents
 ```
 
